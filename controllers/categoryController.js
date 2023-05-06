@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
 exports.getAllCategory = catchAsync(async (req, res, next) => {
-  const categories = Category.find();
+  const categories = await Category.find();
   if (!categories) return next(new AppError('No category found!!!', 400));
 
   res.status(200).json({

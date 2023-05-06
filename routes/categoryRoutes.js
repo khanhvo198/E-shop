@@ -7,12 +7,12 @@ const categoryController = require('../controllers/categoryController');
 router
   .route('/')
   .get(categoryController.getAllCategory)
-  .post(categoryController.createOne);
+  .post(categoryController.createCategory);
 
 router
   .route('/:id')
-  .get(categoryController.getOne)
-  .patch(categoryController.updateOne)
-  .delete(categoryController.deleteOne);
+  .get(categoryController.getCategory)
+  .patch(categoryController.updateCategory)
+  .delete(categoryController.deleteCategory);
 
 module.exports = router;
