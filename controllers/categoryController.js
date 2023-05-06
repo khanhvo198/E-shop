@@ -16,7 +16,7 @@ exports.getAllCategory = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getCategory = factory.getOne;
-exports.createCategory = factory.createOne;
-exports.updateCategory = factory.updateOne;
-exports.deleteCategory = factory.deleteOne;
+exports.getCategory = factory.getOne(Category);
+exports.createCategory = factory.createOne(Category);
+exports.updateCategory = factory.updateOne(Category);
+exports.deleteCategory = factory.deleteOne(Category);
