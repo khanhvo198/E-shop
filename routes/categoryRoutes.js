@@ -7,7 +7,11 @@ const categoryController = require('../controllers/categoryController');
 router
   .route('/')
   .get(categoryController.getAllCategory)
-  .post(categoryController.createCategory);
+  .post(
+    categoryController.uploadImageCategory,
+    categoryController.resizeImageCategory,
+    categoryController.createCategory
+  );
 
 router
   .route('/:id')
