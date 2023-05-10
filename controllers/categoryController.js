@@ -1,9 +1,9 @@
 const sharp = require('sharp');
+const multer = require('multer');
 const { Category } = require('../models/categoryModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
-const multer = require('multer');
 
 exports.getAllCategory = catchAsync(async (req, res, next) => {
   const categories = await Category.find();
@@ -45,4 +45,15 @@ exports.resizeImageCategory = catchAsync(async (req, res, next) => {
 exports.getCategory = factory.getOne(Category);
 exports.createCategory = factory.createOne(Category);
 exports.updateCategory = factory.updateOne(Category);
-exports.deleteCategory = factory.deleteOne(Category);
+exports.deleteCategory = catchAsync(async (req, res, next) => {
+  const category = await Category.findByIdAndDelete(req.params.id);
+  if (!category) return next(new AppError('No document found!!!', 400));
+  const restCategories = await Category.find();
+  res.status(200).json({
+    status: 'success',
+    results: restCategories.length,
+    data: {
+      categories: restCategories,
+    },
+  });
+});
