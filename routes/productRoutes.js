@@ -6,7 +6,11 @@ const productController = require('../controllers/productController');
 router
   .route('/')
   .get(productController.getAllProducts)
-  .post(productController.createProduct);
+  .post(
+    productController.uploadImageProduct,
+    productController.resizeImageProduct,
+    productController.createProduct
+  );
 
 router
   .route('/:id')

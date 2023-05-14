@@ -16,6 +16,7 @@ exports.getOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    console.log(req.body);
     const newDoc = await Model.create(req.body);
     if (!newDoc) return next(new AppError('Cannot create document', 400));
 
