@@ -5,7 +5,18 @@ const { Product } = require('../models/productModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-exports.getAllProducts = catchAsync(async (req, res, next) => {});
+exports.getAllProducts = catchAsync(async (req, res, next) => {
+  const products = await Product.find();
+  if (!products) return next(new AppError('No products found!!!', 400));
+
+  res.status(200).json({
+    status: 'success',
+    results: products.length,
+    data: {
+      products,
+    },
+  });
+});
 exports.getProduct = factory.getOne(Product);
 
 const filterObj = (obj, ...allowedFields) => {
@@ -48,7 +59,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     'brand',
     'price',
     'category',
-    'countInStock',
+    'stock',
     'isFeatured'
   );
   if (req.file) filteredBody.image = req.file.filename;
@@ -64,4 +75,15 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.updateProduct = factory.updateOne(Product);
-exports.deleteProduct = factory.deleteOne(Product);
+exports.deleteProduct = catchAsync(async (req, res, next) => {
+  const product = await Product.findByIdAndDelete(req.params.id);
+  if (!product) return next(new AppError('No Product found!!!', 400));
+  const restProducts = await Product.find();
+  res.status(200).json({
+    status: 'success',
+    results: restProducts.length,
+    data: {
+      products: restProducts,
+    },
+  });
+});

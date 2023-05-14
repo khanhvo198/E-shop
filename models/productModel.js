@@ -23,7 +23,7 @@ const productSchema = mongoose.Schema({
     ref: 'Category',
     required: true,
   },
-  countInStock: {
+  stock: {
     type: Number,
     required: true,
     min: 0,
@@ -45,6 +45,10 @@ const productSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+productSchema.set('toJSON', {
+  virtuals: true,
 });
 
 exports.Product = mongoose.model('Product', productSchema);
