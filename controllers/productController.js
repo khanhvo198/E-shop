@@ -17,7 +17,17 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
     },
   });
 });
-exports.getProduct = factory.getOne(Product);
+exports.getProduct = catchAsync(async (req, res, next) => {
+  const doc = await Product.findById(req.params.id).populate('category');
+  if (!doc) return next(new AppError('No doc found', 400));
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      doc,
+    },
+  });
+});
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -40,6 +50,7 @@ const multerFilter = (req, file, cb) => {
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 exports.uploadImageProduct = upload.single('image');
 exports.resizeImageProduct = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
   const filename = `product-${req.body.name}-${Date.now()}.jpeg`;
   req.file.filename = filename;
   await sharp(req.file.buffer)
@@ -74,7 +85,38 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateProduct = factory.updateOne(Product);
+exports.updateProduct = catchAsync(async (req, res, next) => {
+  const filteredBody = filterObj(
+    req.body,
+    'name',
+    'description',
+    'richDescription',
+    'brand',
+    'price',
+    'category',
+    'stock',
+    'isFeatured'
+  );
+  if (req.file) filteredBody.image = req.file.filename;
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    req.params.id,
+    filteredBody,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!updatedProduct) return next(new AppError('Cannot update document', 400));
+
+  res.status(203).json({
+    status: 'success',
+    data: {
+      doc: updatedProduct,
+    },
+  });
+});
 exports.deleteProduct = catchAsync(async (req, res, next) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) return next(new AppError('No Product found!!!', 400));
