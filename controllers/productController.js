@@ -1,12 +1,11 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const factory = require('./handlerFactory');
 const { Product } = require('../models/productModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
-  const products = await Product.find();
+  const products = await Product.find().populate('category');
   if (!products) return next(new AppError('No products found!!!', 400));
 
   res.status(200).json({
