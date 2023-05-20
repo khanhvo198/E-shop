@@ -20,3 +20,4 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 
 exports.deleteUser = factory.deleteOne(User);
 exports.updateUser = factory.updateOne(User);
+exports.createUser = factory.createOne(User);
