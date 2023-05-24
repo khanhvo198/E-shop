@@ -39,6 +39,21 @@ exports.signIn = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.protect = catchAsync(async (req, res, next) => {
+  if (!req.cookie.token) return next(new AppError('Please sign in', 401));
+  const token = req.cookie.jwt;
+
+  const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+  const currentUser = await User.findOne({ email: decoded.email });
+
+  if (!currentUser) return next(new AppError("User doesn't exist", 400));
+
+  req.user = currentUser;
+
+  next();
+});
+
 exports.signOut = catchAsync(async (req, res, next) => {});
 
 exports.signUp = catchAsync(async (req, res, next) => {
