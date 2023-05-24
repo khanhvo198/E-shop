@@ -23,6 +23,13 @@ exports.signIn = catchAsync(async (req, res, next) => {
     { expiresIn: process.env.EXPIRES_IN }
   );
 
+  const cookieOptions = {
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  res.cookie('jwt', token, cookieOptions);
+
   res.status(200).json({
     status: 'success',
     token,
